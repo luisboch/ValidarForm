@@ -220,7 +220,11 @@
 	}
 	function validar(itm,tp,form)
 	{
-		if(tipo){
+		
+		tag_search = itm.get(0).tagName.toLowerCase();
+		itm_name = itm.attr("name")
+		
+		if(tp){
 			switch(tipo){
 				case 'float':
 					reDigits = /^[+-]?((\d+|\d{1,3}(\.\d{3})+)(\,\d*)?|\,\d+)$/;
@@ -295,9 +299,6 @@
 						t = a.split(',');
 						t[1]= parseInt(t[1]);
 						
-						tag_search = itm.get(0).tagName.toLowerCase();
-						
-						itm_name = itm.attr("name")
 						
 						if(itm_name != undefined){ itm_name = itm_name.replace('[]','').replace('[]','') }
 						itms_atingidos =$(form).find(tag_search+'[name^='+itm_name+']');
@@ -335,10 +336,19 @@
 				break;
 			}
 		}
+		else if(tag_search == 'input' && itm.attr('type') == 'radio'){
+			itms_atingidos =$(form).find(tag_search+'[name^='+itm_name+']');
+				
+			if(itms_atingidos.filter(':checked').length == 0 || itms_atingidos.filter(':checked').val() == ''){
+				if(!msg){msg = "Selecione uma opcão válida!"}
+				return false;
+			}
+		}
 		else if(itm.val()==''){
 			if(!msg){msg = "Este campo não deve ficar vazio!"}
-				return false;
+			return false;
 		}
+		
 		return true;
 	}
         /*
