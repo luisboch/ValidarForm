@@ -149,7 +149,7 @@
 			}
 			
 			if(h&&valido){//homologacao
-				alert('Formulário Válidado!')/;
+				alert('Formulário Válidado!');
 				return false;
 			}
 		
@@ -191,7 +191,7 @@
 				last_mesage.animate({
 						opacity: 0
 				 	}, 500, function() {
-				    last_mesage.remove();
+				    $(this).remove();
 				  });
 			})
 			itms_atingidos.unbind('keyup')
@@ -201,7 +201,7 @@
 				last_mesage.animate({
 						opacity: 0
 				 	}, 500, function() {
-				    last_mesage.remove();
+				    $(this).remove();
 				  });
 			})
 			itms_atingidos.unbind('keyup')
@@ -210,7 +210,7 @@
 				last_mesage.animate({
 						opacity: 0
 				 	}, 500, function() {
-				    last_mesage.remove();
+				    $(this).remove();
 				  });
 			
 			})
