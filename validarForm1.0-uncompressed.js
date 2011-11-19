@@ -1,6 +1,6 @@
 /*
  * @author Luis Carlos Boch luis.c.boch@gmail.com
- * @since 
+ * 
  * */
 
 (function($) {
