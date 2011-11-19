@@ -1,1 +1,112 @@
+Este plugin jQuery tem o objetivo de facilitar as validações feitas em formulários
 
+Para utilizar basta usar o seletor jQuery em um formulário da seguinte forma,
+
+jQuery('#cadastro').ValidarForm()
+
+Assim o formulário já estará sendo validado de forma default vc pode ainda alterar as opções:
+
+<code>
+
+var options = {
+
+           useAlert: false,
+
+           htmlError:'<div class="validar-form-msg-erro" style="position:absolute; color:#666666; padding:7px; font-size:11px; margin:-5px 0px 0px 0px;width:200px; background: #FDD; z-index:99999; border:1px dotted #999;display:none;">!-msg-!</div>',
+
+           attrRequired:'require',
+
+           attrMesage:'mesage',
+
+           attrType:'validate',
+
+           attrTest:'test',
+
+           homologacao:false
+
+}
+
+jQuery('#cadastro').ValidarForm(options)
+
+</code>
+
+Explicando cada opção:
+
+useAlert: esta opcao forca o plugin a usar o alert padrao e não usar a disposição de mensagem ao lado do item;
+
+htmlError: Html padrão para exibição da mensagen de erro encontrado, para substituir é necessário apenas colocar !-msg-! onde deverá aparecer a mensagen de erro;
+
+attrRequired:Atributo que forca a validacao do campo será pesquisado pelo plugin  o padrão é require, obs, se utilizar 'required', os navegadores com suporte avançado à html 5  validarão duas vezes o formulário, recomendo mater o padrão ou substituir por algo diferente de 'required', ex: 'obrigatorio';
+
+attrMesage:Atributo que substituirá a mensagem padrão de validação do tipo;
+
+attrType:Atributo que contem o tipo de dado a ser validado
+
+attrTest:caso tenha uma exeção de validação deve ser colocado neste atributo usando um padrão exemplo,"nome_ou_id_docampo>5","nome_ou_id_docampo<5","nome_ou_id_docampo=sim", caso o teste retorne true o campo será validado, caso false, não;
+
+homologacao:Caso esteja inciando a validacao e queira testa-la, sete este atributo como true, o formulário não será enviado, apenas será exibido uma mensagem se foi validado ou não;
+
+Pequeno Exemplo:
+
+No formulário é necessário apenas usar as tags configuradas exemplo:
+
+<form >
+
+ Email:<input type="text" test="select_test=sim" require="true" mesage="Prencha este campo caso o select seja sim" validate="email">
+
+ Voce tem email?<select name="select_test"><option value="sim">Sim</option><option value="nao">Não</option></select>
+
+ <input type="submit" value="enviar">
+
+</form>
+
+<script type="text/javascript">
+
+ $('form').ValidarForm();
+
+</script>
+
+
+Repare que já utilizamos o atributo de teste para realizar a validação
+
+Tipos de validações disponíveis:
+
+integer: Verifica se o valor no campo é inteiro;
+
+integer[2]:Verifica se o valor no campo é inteiro com 2 digitos
+
+float: Verifica se o  valor no campo é decimal;
+
+count[]: Utilizado para validações de chekbox e selects, que precisam de mais de um campo selecionados, conta quantos items checados selecionados existem, utilização:
+
+ count[checked,5,>]: contára quantos campos checkados com o mesmo atributo name e, se for menor ou igual a 5 retorna-rá false ;
+
+count[selected,2,=]: contára quantos campos selecionados com o mesmo atributo name e, e se for diferente de 2 retorna-rá false;
+
+cpf:Verifica se o valor é um cpf válido;
+
+email:Verifica se o valor é um email válido;
+
+cnpj:Verfica se o valor é um cnpj válido;
+
+cep:Verifica se o valor é um cep válido;
+
+Obs: Se o campo ficar sem atributo validate diferente dos possíveis ou apenas abilitar o atributo require, o validador apenas verifica-rá se o campo não está vazio;
+
+Instalação:
+
+Para instalar é necessário ter o framework jQuery, incluido no head de sua página, recomendo a versão 1.4 ou superior, com versões inferiores o plugin não foi testado:
+
+<script type=”text/javascript“ src="jquery1.7.js">
+
+<script type=”text/javascript“ src="validarForm.js">
+
+Após é necessário apenas usar o seletor jQuery, para chamar o plugin como descrito acima.
+
+um exemplo do plugin funcionando está no repositório, junto com framework;
+
+Dúvidas, sugestões, críticas:
+
+ <a href="mailto:luis.c.boch@gmail.com">luis.c.boch@gmail.com</a>
+
+Até a próxima.
