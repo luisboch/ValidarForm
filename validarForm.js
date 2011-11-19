@@ -1,15 +1,21 @@
+/*
+ * @author Luis Carlos Boch luis.c.boch@gmail.com
+ * @since 
+ * */
+
 (function($) {
-    $.fn.ValidarForm = function(settings) {
+    $.fn.validarForm = function(settings) {
   settings = $.extend({
             useAlert: false,
-			htmlError:'<div class="validar-form-msg-erro" style="position:absolute; color:#666666; padding:7px; font-size:11px; margin:-5px 0px 0px 0px;width:200px; background: #FDD; z-index:99999; border:1px dotted #999;display:none;"></div>',
-			attrRequired:'require',
-			attrMesage:'mesage',
-			attrType:'validate',
-			attrTest:'test'
+            htmlError:'<div class="validar-form-msg-erro" style="position:absolute; color:#666666; padding:7px; font-size:11px; margin:-5px 0px 0px 0px;width:200px; background: #FDD; z-index:99999; border:1px dotted #999;display:none;">${mesage}</div>',
+            attrRequired:'require',
+            attrMesage:'mesage',
+            attrType:'validate',
+            attrTest:'test'
         }, settings);
         var attrMsg = settings.attrMesage, attrTp = settings.attrType, attrRq = settings.attrRequired, attrTst = settings.attrTest;
         var msg = '';
+        var last_mesage;
 	$(this).each(function(){
 		f = this
 		$(f).submit(function(){
@@ -140,46 +146,58 @@
 			return valido;
 		})
 	});
+	/*
+	 * @author Luis Carlos Boch <luis.c.boch@gmail.com>
+	 * @param msg String mensagem que será exibida no campo, obrigatório
+	 * @param l objeto jQuery que será aplicado a mensagem de erro
+	 * @param status opcional caso true remove a mensagem não mais exibindo a mesma, usado preferencialmente no interior do objeto
+	 */
 	function displayError(msg,l,status)
 	{
 		if(settings.useAlert){
 			alert(msg)
 		}
 		else{
-			if(!status){
-				if(l.next().find('div.validar-form-msg-erro').length==0||l.next().attr('class')!='validar-form-msg-erro'){
-					l.after(settings.htmlError)
+			html = settings.htmlError.replace("${mesage}",msg)
+			
+			if(last_mesage){last_mesage.remove()}
+			
+			l.after(html)
+			
+			last_mesage = l.next()
+			
+			l.next().css({
+				'left':(l.offset().left+l.width()-5)+'px',
+				'top':(l.offset().top+15)+'px',
+				'display':'none'
+			})
+			
+			l.next().fadeIn(500)
+			
+			l.unbind('change')
+			l.change(function(){
+				if(l.next().attr('class')=='validar-form-msg-erro'){
+					
+					last_mesage.animate({
+    						opacity: 0
+					 	}, 500, function() {
+					    last_mesage.remove();
+					  });
+				}	
+			})
+			l.unbind('keyup')
+			l.keyup(function(){
+				if(l.next().attr('class')=='validar-form-msg-erro'){
+					last_mesage.animate({
+    						opacity: 0
+					 	}, 500, function() {
+					    last_mesage.remove();
+					  });
+				
 				}
-				if(l.next().find('div.validar-form-msg-erro').length==1){
-					l.next().find('div.validar-form-msg-erro').html(msg)
-					l.next().css({
-						'left':(l.offset().left+l.width()-5)+'px',
-						'top':(l.offset().top+15)+'px'
-					})
-				}
-				else if(l.next().attr('class')=='validar-form-msg-erro'){
-					l.next().html(msg).css({
-						'left':(l.offset().left+l.width()-5)+'px',
-						'top':(l.offset().top+15)+'px'
-					})
-				}
-		/*left:'+(l.offset().left+l.width()-5)+'px;top:'+(l.offset().top+15)+'px;*/
-				l.next().fadeIn(200)
-				tag = l.attr("tagName");
-				l.unbind('change')
-				l.change(function(){
-					displayError(msg,l,true)
-				})
-				l.unbind('keyup')
-				l.keyup(function(){
-					displayError(msg,l,true)
-				})
-			}
-			else{
-				if(l.next().find('div.validar-form-msg-erro').length!=0||l.next().attr('class')=='validar-form-msg-erro'){
-					l.next().fadeOut(200);
-				}
-			}
+			})
+				
+			
 		}
 	}
 	function validar(itm,tp)
@@ -197,6 +215,26 @@
 					reDigits = /^\d+$/;
 					if(itm.val()==''||!reDigits.test(itm.val())){
 						if(!msg){msg = "Este campo deve ser numero inteiro!"}
+						return false;
+					}
+				break;
+				case 'cpf':
+					if(!validarCpf(itm.val())){
+						if(!msg){msg = "Este campo deve ser cpf válido!"}
+						return false;
+					}
+				break;
+				case 'email':
+					reEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{1,3})+$/;
+					if(!reEmail.test(itm.val())){
+						if(!msg){msg = "Este campo deve ser um email válido!"}
+						return false;
+					}
+				break;
+				case 'cep':
+					reCEP = /^\d{5}-\d{3}$/;
+					if(!reCEP.test(itm.val())){
+						if(!msg){msg = "Este campo deve ser um CEP válido!"}
 						return false;
 					}
 				break;
@@ -225,6 +263,45 @@
 		}
 			return true;
 	}
+        /*
+         * @author http://www.gerardocumentos.com.br/?pg=funcao-javascript-para-validar-cpf
+         * @param cpf Cpf a ser validado!
+         * @return boolean indicando se é válido ou não.
+         * 
+         */
+        function validarCpf(cpf){
+              var numeros, digitos, soma, i, resultado, digitos_iguais;
+              digitos_iguais = 1;
+              if (cpf.length < 11)
+                    return false;
+              for (i = 0; i < cpf.length - 1; i++)
+                    if (cpf.charAt(i) != cpf.charAt(i + 1))
+                          {
+                          digitos_iguais = 0;
+                          break;
+                          }
+              if (!digitos_iguais)
+                    {
+                    numeros = cpf.substring(0,9);
+                    digitos = cpf.substring(9);
+                    soma = 0;
+                    for (i = 10; i > 1; i--)
+                          soma += numeros.charAt(10 - i) * i;
+                    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+                    if (resultado != digitos.charAt(0))
+                          return false;
+                    numeros = cpf.substring(0,10);
+                    soma = 0;
+                    for (i = 11; i > 1; i--)
+                          soma += numeros.charAt(11 - i) * i;
+                    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+                    if (resultado != digitos.charAt(1))
+                          return false;
+                    return true;
+                    }
+              else
+                    return false;
+        }
 }
 })(jQuery);
 

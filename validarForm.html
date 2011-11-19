@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>validarForm</title>
+		<meta name="author" content="Luis Carlos Boch" />
+		<!-- Date: 2011-11-19 -->
+		<script type="text/javascript" src="jquery.js"></script>
+		<script type="text/javascript" src="validarForm.js"></script>
+			
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('form').validarForm({
+		            attrRequired:'obrigatorio',
+		            //attrMesage:'mesage',
+		            attrType:'validar',
+				})
+			})
+		</script>
+	</head>
+	<body>
+		<form onsubmit="$(body).append('<br>Formulário validado...');return false;">
+			Cpf:<input type="text" validar="cpf"/><br/>
+			Email:<input type="text" validar="email"/><br/>
+			Cep:<input type="text" validar="cep"/><br/>
+			(*)Cpf:<input type="text" validar="cpf" mesage="Preencha com um cpf Válido!" obrigatorio="true" /><br/>
+			(*)Email:<input type="text" validar="email" obrigatorio="true"/><br/>
+			(*)Cep:<input type="text" validar="cep" obrigatorio="true"/><br/>
+			<input type="submit" value="enviar" />
+		</form>
+		
+		
+	</body>
+</html>
