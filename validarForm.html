@@ -13,7 +13,7 @@
 			$(document).ready(function(){
 				$('form').validarForm({
 		            attrRequired:'obrigatorio',
-		            //attrMesage:'mesage',
+		            homologacao:true,
 		            attrType:'validar',
 				})
 			})
@@ -22,13 +22,18 @@
 	<body>
 		<form onsubmit="" action="?true">
 			Cpf:<input type="text" validar="cpf"/><br/>
+			Selecionar Opcoes:<select name="opcoes" ><option value="sim">Sim</option><option value="nao">Não</option></select><br/>
 			Email:<input type="text" validar="email"/><br/>
 			Cep:<input type="text" validar="cep"/><br/>
 			Cnpj:<input type="text" validar="cnpj"/><br/>
-			(*)Cpf:<input type="text" validar="cpf" mesage="Preencha com um cpf Válido!" obrigatorio="true" /><br/>
-			(*)Email:<input type="text" validar="email" obrigatorio="true"/><br/>
-			(*)Cep:<input type="text" validar="cep" obrigatorio="true"/><br/>
-			(*)Cnpj:<input type="text" validar="cnpj" obrigatorio="true"/><br/>
+			(*)Cpf:<input name="cpf" type="text" validar="cpf" mesage="Preencha com um cpf Válido!" obrigatorio="true" /><br/>
+			(*)Email:<input name="email" type="text" validar="email" obrigatorio="true"/><br/>
+			(*)Cep:<input name="cep" type="text" validar="cep" obrigatorio="true"/><br/>
+			(será validado se o campo selecionar opcoes for = sim)Selecione 2 opções:<br>1<input name="ids[]" type="checkbox" test="opcoes=sim" validar="count[checked,2,=]" obrigatorio="true"/><br/>
+			2<input name="ids[]" type="checkbox" /><br/>
+			3<input name="ids[]" type="checkbox" /><br/>
+			4<input  name="ids[]" type="checkbox" /><br/>
+			5<input  name="ids[]" type="checkbox" /><br/>
 			<input type="submit" value="enviar" />
 		</form>
 		

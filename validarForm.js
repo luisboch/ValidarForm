@@ -11,11 +11,15 @@
             attrRequired:'require',
             attrMesage:'mesage',
             attrType:'validate',
-            attrTest:'test'
+            attrTest:'test',
+            homologacao:false
         }, settings);
         var attrMsg = settings.attrMesage, attrTp = settings.attrType, attrRq = settings.attrRequired, attrTst = settings.attrTest;
         var msg = '';
         var last_mesage;
+        var h = settings.homologacao;
+        var f//objeto formulario;
+        var itms_atingidos;
 	$(this).each(function(){
 		f = this
 		$(f).submit(function(){
@@ -113,13 +117,13 @@
 							if($(this).val()!=''){ require = true }
 							
 							if(require){
-								valido = validar($(this),tipo)
+								valido = validar($(this),tipo,f)
 							}
 							
 							if(!valido){
-								displayError(msg,$(this));
 								this.focus()
 								$(this).css('background','#fFD');
+								displayError(msg,$(this));
 							}
 							else{
 								$(this).css('background','#FFF');
@@ -143,6 +147,12 @@
 			}catch(e){
 				return false;
 			}
+			
+			if(h&&valido){//homologacao
+				$('body').append('<p>Formulário Válidado!</p>')
+				return false;
+			}
+		
 			return valido;
 		})
 	});
@@ -174,33 +184,41 @@
 			
 			l.next().fadeIn(500)
 			
-			l.unbind('change')
-			l.change(function(){
-				if(l.next().attr('class')=='validar-form-msg-erro'){
+			
+			itms_atingidos.unbind('change')
+			itms_atingidos.change(function(){
 					
-					last_mesage.animate({
-    						opacity: 0
-					 	}, 500, function() {
-					    last_mesage.remove();
-					  });
-				}	
+				last_mesage.animate({
+						opacity: 0
+				 	}, 500, function() {
+				    last_mesage.remove();
+				  });
 			})
-			l.unbind('keyup')
-			l.keyup(function(){
-				if(l.next().attr('class')=='validar-form-msg-erro'){
-					last_mesage.animate({
-    						opacity: 0
-					 	}, 500, function() {
-					    last_mesage.remove();
-					  });
-				
-				}
+			itms_atingidos.unbind('keyup')
+			
+			itms_atingidos.unbind('click')
+			itms_atingidos.click(function(){
+				last_mesage.animate({
+						opacity: 0
+				 	}, 500, function() {
+				    last_mesage.remove();
+				  });
+			})
+			itms_atingidos.unbind('keyup')
+			
+			itms_atingidos.keyup(function(){
+				last_mesage.animate({
+						opacity: 0
+				 	}, 500, function() {
+				    last_mesage.remove();
+				  });
+			
 			})
 				
 			
 		}
 	}
-	function validar(itm,tp)
+	function validar(itm,tp,form)
 	{
 		if(tipo){
 			switch(tipo){
@@ -208,6 +226,7 @@
 					reDigits = /^[+-]?((\d+|\d{1,3}(\.\d{3})+)(\,\d*)?|\,\d+)$/;
 					if(itm.val()==''||!reDigits.test(itm.val())){
 						if(!msg){msg = "Este campo deve ser numero!"}
+						itms_atingidos  = itm;
 						return false;
 					}
 				break;
@@ -215,31 +234,37 @@
 					reDigits = /^\d+$/;
 					if(itm.val()==''||!reDigits.test(itm.val())){
 						if(!msg){msg = "Este campo deve ser numero inteiro!"}
+						itms_atingidos  = itm;
 						return false;
 					}
 				break;
 				case 'cpf':
 					if(!validarCpf(itm.val().replace('.','').replace('.','').replace('.','').replace('-',''))){
 						if(!msg){msg = "Este campo deve ser cpf válido!"}
+						itms_atingidos  = itm;
 						return false;
 					}
 				break;
 				case 'cnpj':
 					if(!validaCnpj(itm.val().replace('.','').replace('.','').replace('/','').replace('-',''))){
 						if(!msg){msg = "Este campo deve ser CNPJ válido!"}
+						itms_atingidos  = itm;
 						return false;
 					}
 				break;
 				case 'email':
 					reEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{1,3})+$/;
 					if(!reEmail.test(itm.val())){
+						
 						if(!msg){msg = "Este campo deve ser um email válido!"}
+						itms_atingidos  = itm;
 						return false;
 					}
 				break;
 				case 'cep':
-					reCEP = /^\d{5}-\d{3}$/;
-					if(!reCEP.test(itm.val())){
+					reCEP = /^\d{8}$/;
+					if(!reCEP.test(itm.val().replace('-',''))){
+						itms_atingidos  = itm;
 						if(!msg){msg = "Este campo deve ser um CEP válido!"}
 						return false;
 					}
@@ -250,13 +275,60 @@
 						reDigits = /^\d+$/;
 						if(!reDigits.test(itm.val())){
 							if(!msg){msg = "Este campo deve ser numero com "+num +"!"}
+							itms_atingidos  = itm;
 							return false;
 						}else if(parseInt(itm.val().length) != num){
 							if(!msg){msg = "Este campo deve ser numero com "+num+"!"}
+							itms_atingidos  = itm;
 							return false;
 						}
 					}
+					else if(tipo.indexOf('count')!=1)
+					{
+					
+						//t = varivel que armazena o tipo de dado
+						aux = Array();
+						aux[0] = tipo.indexOf('[')+1;
+						aux[1] = tipo.indexOf(']');
+						aux[1] = aux[1]-aux[0];
+						a = tipo.substr(aux[0],aux[1])
+						t = a.split(',');
+						t[1]= parseInt(t[1]);
+						
+						tag_search = itm.get(0).tagName.toLowerCase();
+						
+						itm_name = itm.attr("name")
+						
+						if(itm_name != undefined){ itm_name = itm_name.replace('[]','').replace('[]','') }
+						itms_atingidos =$(form).find(tag_search+'[name^='+itm_name+']');
+						
+						if(t[2]==undefined && itms_atingidos.filter(':'+t[0]).length<t[1])
+						{
+							if(!msg){msg = "Selecione pelo menos "+t[1]+" opçõe(s)!"}
+							return false;
+						}
+						else if(t[2]== '=' && itms_atingidos.filter(':'+t[0]).length!=t[1]){
+							
+							if(!msg){msg = "Selecione apenas "+t[1]+" opçõe(s)!"}
+							return false;
+							
+						}
+						else if(t[2]== '<' && itms_atingidos.filter(':'+t[0]).length>=t[1]){
+							
+							if(!msg){msg = "Selecione no máximo "+(t[1]-1)+" opçõe(s)!"}
+							return false;
+							
+						}
+						else if(t[2]== '>' && itms_atingidos.filter(':'+t[0]).length<=t[1]){
+							
+							if(!msg){msg = "Selecione mais que "+t[1]+" opçõe(s)!"}
+							return false;
+							
+						}
+					}
 					else if(itm.val()==''){
+						
+						itms_atingidos  = itm;
 						if(!msg){msg = "Este campo não deve ficar vazio!"}
 						return false;
 					}
@@ -267,7 +339,7 @@
 			if(!msg){msg = "Este campo não deve ficar vazio!"}
 				return false;
 		}
-			return true;
+		return true;
 	}
         /*
          * @author http://www.gerardocumentos.com.br/?pg=funcao-javascript-para-validar-cpf
