@@ -7,7 +7,7 @@
     $.fn.validarForm = function(settings) {
   settings = $.extend({
             useAlert: false,
-            htmlError:'<div class="validar-form-msg-erro" style="position:absolute; color:#666666; padding:7px; font-size:11px; margin:-5px 0px 0px 0px;width:200px; background: #FDD; z-index:99999; border:1px dotted #999;display:none;">${mesage}</div>',
+            htmlError:'<div class="validar-form-msg-erro" style="position:absolute; color:#666666; padding:7px; font-size:11px; margin:-5px 0px 0px 0px;width:200px; background: #FDD; z-index:99999; border:1px dotted #999;display:none;">!-msg-!</div>',
             attrRequired:'require',
             attrMesage:'mesage',
             attrType:'validate',
@@ -168,7 +168,7 @@
 			alert(msg)
 		}
 		else{
-			html = settings.htmlError.replace("${mesage}",msg)
+			html = settings.htmlError.replace("!-msg-!",msg)
 			
 			if(last_mesage){last_mesage.remove()}
 			
