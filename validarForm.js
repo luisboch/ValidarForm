@@ -149,7 +149,7 @@
 			}
 			
 			if(h&&valido){//homologacao
-				$('body').append('<p>Formulário Válidado!</p>')
+				alert('Formulário Válidado!')/;
 				return false;
 			}
 		
