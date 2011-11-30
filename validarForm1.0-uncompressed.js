@@ -12,7 +12,10 @@
             attrMesage:'mesage',
             attrType:'validate',
             attrTest:'test',
-            homologacao:false
+            homologacao:false,
+			afterValidation:function(f){
+				return true;
+			}
         }, settings);
         var attrMsg = settings.attrMesage, attrTp = settings.attrType, attrRq = settings.attrRequired, attrTst = settings.attrTest;
         var msg = '';
@@ -20,141 +23,137 @@
         var h = settings.homologacao;
         var f//objeto formulario;
         var itms_atingidos;
-	$(this).each(function(){
-		f = this
-		$(f).submit(function(){
-			try{
-				valido = true;
-				$(f).unbind('click')
-				$(f).click(function(){
-					$(f).find('['+attrTp+']').css('background','#FFF');
-					$(f).find('['+attrRq+']').css('background','#FFF');
-				})
-				$(f).find('[validar]').each(function(){
-					if(!$(this).attr(attrRq) && $(this).val()!='')
-					{
-						$(this).attr(attrRq,'aux')
-					}
-				})
-				$(f).find('['+attrRq+']').each(function(i){
-					if(valido){
-						tipo = $(this).attr(attrTp);
-						msg = $(this).attr(attrMsg);
-						require =  $(this).attr(attrRq);
-						dependencia = $(this).attr(attrTst)
-						teste = true;
-						if(dependencia)
-						{
-							tp = '';
-							if(dependencia.indexOf('=')!=-1){
-								tp = 'igual';
-								campos = dependencia.split('=');
-							}
-							else if(dependencia.indexOf('!=')!=-1)
-							{
-								tp = 'diferente'
-								campos = dependencia.split('!=');
-							}
-							else if(dependencia.indexOf('>')!=-1)
-							{
-								tp = 'maior'
-								campos = dependencia.split('>');
-							}
-							else if(dependencia.indexOf('<')!=-1)
-							{
-								tp = 'menor'
-								campos = dependencia.split('<');
-							}
-							
-							campo_a = $('#'+campos[0])
-							campo_b = campos[1]
-							
-							if(campo_a.length==0){
-								campo_a = $('[name='+campos[0]+']')
-							}
-							
-							if(campo_a.length ==0)
-							{
-								throw new Exeption("O campo definido para teste deve ser definido com o name ou id do item");
-							}
-							
-							switch(tp){
-								case 'maior':
-								{
-									if( campo_a.val() <= campo_b )
-									{
-										teste = false;
-									}
-								}
-								break;
-								case 'menor':
-								{
-									if( campo_a.val() >= campo_b )
-									{
-										teste = false;
-									}
-								}
-								break;
-								case 'diferente':
-								{
-									if( campo_a.val() == campo_b )
-									{
-										teste = false;
-									}
-								}
-								break;
-								case 'igual':
-								{
-									if( campo_a.val() != campo_b )
-									{
-										teste = false;
-									}
-								}
-								break;
-							}
-						}
-						if(teste){
-							if($(this).val()!=''){ require = true }
-							
-							if(require){
-								valido = validar($(this),tipo,f)
-							}
-							
-							if(!valido){
-								this.focus()
-								$(this).css('background','#fFD');
-								displayError(msg,$(this));
-							}
-							else{
-								$(this).css('background','#FFF');
-							}
-						}
-						else
-						{
-							n = $(this).css('background','#FFF').next();
-							if(n.attr('class')=='erro_form'){
-								n.fadeOut(200)
-							}
-						}
-					}
-				})
-				
-				$(f).find('['+attrRq+'=aux]').each(function(){
-				$(this).removeAttr(attrRq)
-				
-				})
+		$(this).each(function(){
+			f = this
 			
-			}catch(e){
-				return false;
-			}
+			$(f).submit(function(){
+				
+				try{
+					valido = true;
+					/*$(f).unbind('click')
+					$(f).click(function(){
+						$(f).find('['+attrTp+']').css('background','#FFF');
+						$(f).find('['+attrRq+']').css('background','#FFF');
+					})*/
+					$(f).find('['+attrTp+']').each(function(){
+						if(!$(this).attr(attrRq) && $(this).val()!='')
+						{
+							$(this).attr(attrRq,'aux')
+						}
+					})
+					
+					$(f).find('['+attrRq+']').each(function(i){
+						if(valido){
+							tipo = $(this).attr(attrTp);
+							msg = $(this).attr(attrMsg);
+							require =  $(this).attr(attrRq);
+							dependencia = $(this).attr(attrTst)
+							teste = true;
+							if(dependencia)
+							{
+								tp = '';
+								if(dependencia.indexOf('=')!=-1){
+									tp = 'igual';
+									campos = dependencia.split('=');
+								}
+								else if(dependencia.indexOf('!=')!=-1)
+								{
+									tp = 'diferente'
+									campos = dependencia.split('!=');
+								}
+								else if(dependencia.indexOf('>')!=-1)
+								{
+									tp = 'maior'
+									campos = dependencia.split('>');
+								}
+								else if(dependencia.indexOf('<')!=-1)
+								{
+									tp = 'menor'
+									campos = dependencia.split('<');
+								}
+								
+								campo_a = $('#'+campos[0])
+								campo_b = campos[1]
+								
+								if(campo_a.length==0){
+									campo_a = $('[name='+campos[0]+']')
+								}
+								
+								if(campo_a.length ==0)
+								{
+									throw new Exeption("O campo definido para teste deve ser definido com o name ou id do item");
+								}
+								
+								switch(tp){
+									case 'maior':
+									{
+										if( campo_a.val() <= campo_b )
+										{
+											teste = false;
+										}
+									}
+									break;
+									case 'menor':
+									{
+										if( campo_a.val() >= campo_b )
+										{
+											teste = false;
+										}
+									}
+									break;
+									case 'diferente':
+									{
+										if( campo_a.val() == campo_b )
+										{
+											teste = false;
+										}
+									}
+									break;
+									case 'igual':
+									{
+										if( campo_a.val() != campo_b )
+										{
+											teste = false;
+										}
+									}
+									break;
+								}
+							}
+							if(teste){
+								if($(this).val()!=''){ require = true }
+								
+								if(require){
+									valido = validar($(this),tipo,f)
+								}
+								
+								if(!valido){
+									this.focus()
+									//$(this).css('background','#fFD');
+									displayError(msg,$(this));
+								}
+								else{
+									$(this).css('background','#FFF');
+								}
+							}
+						}
+					})
+					
+					$(f).find('['+attrRq+'=aux]').removeAttr(attrRq)
+				
+				}catch(e){
+					return false;
+				}
+				if(valido){
+					valido = settings.afterValidation($(f));
+				}
+				if(h&&valido){//homologacao
+					alert('Formulário Válidado!');
+					return false;
+				}
 			
-			if(h&&valido){//homologacao
-				alert('Formulário Válidado!');
-				return false;
-			}
-		
-			return valido;
-		})
+				return valido;
+				
+			})
 	});
 	/*
 	 * @author Luis Carlos Boch <luis.c.boch@gmail.com>
